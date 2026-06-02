@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">文境阅读</string>
+    <string name="library_title">我的书架</string>
+    <string name="import_book">导入书籍</string>
+    <string name="no_books">还没有书，点击 + 导入</string>
+    <string name="reading_progress">已读 %d%%</string>
+    <string name="settings_font_size">字体大小</string>
+    <string name="settings_theme">主题</string>
+    <string name="theme_day">白昼</string>
+    <string name="theme_sepia">羊皮纸</string>
+    <string name="theme_night">夜间</string>
+    <string name="settings_brightness">亮度</string>
+    <string name="format_epub">ePub</string>
+    <string name="format_pdf">PDF</string>
+    <string name="format_mobi">MOBI</string>
+    <string name="format_fb2">FB2</string>
+    <string name="format_cbz">CBZ</string>
+    <string name="format_cbr">CBR</string>
+</resources>
