@@ -42,12 +42,6 @@
             </intent-filter>
         </activity>
 
-        <!-- 前台服务用于导入大文件时的进度通知 -->
-        <service
-            android:name=".imports.ImportService"
-            android:foregroundServiceType="dataSync"
-            android:exported="false" />
-
         <!-- File Provider 用于跨应用文件共享 -->
         <provider
             android:name="androidx.core.content.FileProvider"
