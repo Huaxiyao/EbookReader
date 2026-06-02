@@ -1,6 +1,38 @@
 # 文境阅读 — Android 全格式电子书阅读器
 
+![Build](https://github.com/Huaxiyao/EbookReader/actions/workflows/build.yml/badge.svg)
+![Release](https://github.com/Huaxiyao/EbookReader/actions/workflows/release.yml/badge.svg)
+![Android](https://img.shields.io/badge/Android-34-green)
+![Kotlin](https://img.shields.io/badge/Kotlin-1.9-blue)
+![License](https://img.shields.io/badge/License-MIT-orange)
+
 一个原生的 Android 电子书阅读器，专为从 Z-Library 下载的电子书设计。支持一键导入、多格式阅读、个性化主题设置。
+
+## 📥 下载 APK
+
+有两种方式拿到安装包：
+
+### ⚡ 直接下载（推荐）
+
+| 渠道 | 说明 | 链接 |
+|------|------|------|
+| 🏗️ **最新开发版** | 每次代码推送自动构建 | [Actions → 下载](https://github.com/Huaxiyao/EbookReader/actions/workflows/build.yml) |
+| 🚀 **稳定版** | 打 tag 发版时构建 | [Releases → 下载](https://github.com/Huaxiyao/EbookReader/releases) |
+
+**快速下载开发版：**
+1. 打开 [Actions 页面](https://github.com/Huaxiyao/EbookReader/actions/workflows/build.yml)
+2. 点击最新的绿色 ✓ 构建
+3. 拉到最下面 **Artifacts** → 下载 `EbookReader-Debug.zip`
+4. 解压后得到 `app-debug.apk`，传到手机安装即可
+
+### 🔨 自行构建
+
+```bash
+git clone https://github.com/Huaxiyao/EbookReader.git
+cd EbookReader
+./gradlew assembleDebug
+# APK 在 app/build/outputs/apk/debug/app-debug.apk
+```
 
 ## ✨ 功能
 
@@ -67,12 +99,34 @@ EbookReader/
 
 ## 🚀 构建
 
+### Debug APK（开发测试）
+
 ```bash
+git clone https://github.com/Huaxiyao/EbookReader.git
 cd EbookReader
 ./gradlew assembleDebug
+# APK 在 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-APK 生成在 `app/build/outputs/apk/debug/`。
+### Release APK（发布新版本）
+
+```bash
+# 1. 打 tag
+git tag v1.0.0
+git push origin v1.0.0
+
+# 2. GitHub Actions 会自动：
+#    - 构建 Release APK
+#    - 签名（如果配置了签名密钥）
+#    - 创建 GitHub Release 页面
+#    - 上传 APK 到 Release 附件
+```
+
+> 💡 如果想用正式签名（而不是 debug 签名），在 GitHub 仓库设置中添加以下 Secrets：
+> - `KEYSTORE_BASE64` — 签名密钥文件的 base64 编码
+> - `KEYSTORE_PASSWORD` — 密钥库密码
+> - `KEY_ALIAS` — 密钥别名
+> - `KEY_PASSWORD` — 密钥密码
 
 ## 📥 使用流程
 
