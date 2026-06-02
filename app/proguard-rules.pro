@@ -1,6 +1,3 @@
-# Keep epublib classes
--keep class nl.siegmann.epublib.** { *; }
-
 # Keep junrar
 -keep class com.github.junrar.** { *; }
 

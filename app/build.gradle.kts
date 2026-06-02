@@ -94,13 +94,11 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // PDF Viewer
-    implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+    // PDF Viewer (Maven Central)
+    implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 
-    // ePub parsing
-    implementation("com.github.psiegman:epublib:3.1") {
-        exclude(group = "xmlpull", module = "xmlpull")
-    }
+    // RAR support (for CBR comics, Maven Central)
+    implementation("com.github.junrar:junrar:7.5.5")
 
     // RAR support (for CBR comics)
     implementation("com.github.junrar:junrar:7.5.5")
