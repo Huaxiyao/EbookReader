@@ -336,15 +336,13 @@ fun ReaderScreen(
 
         // ── 底部进度条 ──
         if (!uiState.showToolbar && !uiState.showSettings && uiState.totalPages > 0) {
-            @Suppress("DEPRECATION")
             LinearProgressIndicator(
-                progress = { uiState.progress },
+                progress = uiState.progress,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .height(2.dp),
                 color = MaterialTheme.colorScheme.primary,
-                trackColor = Color.Transparent,
                 trackColor = Color.Transparent,
             )
         }
