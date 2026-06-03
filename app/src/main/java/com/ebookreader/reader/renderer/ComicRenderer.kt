@@ -3,11 +3,13 @@ package com.ebookreader.reader.renderer
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,34 +17,31 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.github.junrar.Junrar
-import com.github.junrar.extract.ExtractArchive
 import java.io.File
-import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.util.zip.ZipInputStream
 
 /**
  * 漫画/图册渲染器 — 支持 CBZ (ZIP) 和 CBR (RAR)
- *
- * 将压缩包内的图片逐页显示，支持缩放和平移。
  */
 class ComicRenderer(private val context: Context) {
 
     private var pages: List<File> = emptyList()
     private var currentIndex: Int = 0
 
-    /**
-     * 解压并加载漫画文件
-     * @return 图片页数
-     */
     fun load(filePath: String): Int {
         val file = File(filePath)
         if (!file.exists()) return 0
 
-        // 解压到缓存目录
         val cacheDir = File(context.cacheDir, "comics/${file.nameWithoutExtension}")
-        if (cacheDir.exists()) cacheDir.deleteRecursively()
-        cacheDir.mkdirs()
+        if (!cacheDir.exists()) cacheDir.mkdirs()
+
+        // 仅当缓存为空时才解压
+        val existingFiles = cacheDir.listFiles { f -> f.extension.lowercase() in imageExtensions }
+        if (!existingFiles.isNullOrEmpty()) {
+            pages = existingFiles.sortedBy { it.name }
+            return pages.size
+        }
 
         when {
             filePath.endsWith(".cbz", ignoreCase = true) ||
@@ -55,7 +54,6 @@ class ComicRenderer(private val context: Context) {
             }
         }
 
-        // 按文件名排序
         pages = cacheDir.listFiles()
             ?.filter { it.extension.lowercase() in imageExtensions }
             ?.sortedBy { it.name }
@@ -64,15 +62,12 @@ class ComicRenderer(private val context: Context) {
         return pages.size
     }
 
-    /**
-     * 获取指定页的 Bitmap
-     */
     fun getPageBitmap(index: Int): Bitmap? {
         if (index < 0 || index >= pages.size) return null
         currentIndex = index
         return try {
             BitmapFactory.decodeFile(pages[index].absolutePath)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -81,21 +76,18 @@ class ComicRenderer(private val context: Context) {
     fun getCurrentIndex(): Int = currentIndex
 
     fun cleanup() {
-        // 清理缓存（保留最近的）
         pages.forEach { it.delete() }
     }
 
-    // ── 解压 ──
-
     private fun extractCbz(file: File, dest: File) {
         try {
-            ZipInputStream(FileInputStream(file)).use { zis ->
+            ZipInputStream(file.inputStream()).use { zis ->
                 var entry = zis.nextEntry
                 while (entry != null) {
                     if (!entry.isDirectory) {
-                        val outputFile = File(dest, entry.name)
+                        val outputFile = File(dest, entry.name.substringAfterLast('/'))
                         outputFile.parentFile?.mkdirs()
-                        outputFile.outputStream().use { fos ->
+                        FileOutputStream(outputFile).use { fos ->
                             zis.copyTo(fos)
                         }
                     }
@@ -110,12 +102,13 @@ class ComicRenderer(private val context: Context) {
 
     private fun extractCbr(file: File, dest: File) {
         try {
+            // 使用 junrar 库 (v7.5.5) 的 Archive API
             val archive = com.github.junrar.Archive(file)
             for (fh in archive.fileHeaders) {
                 if (!fh.isDirectory) {
-                    val outputFile = File(dest, fh.fileName)
+                    val outputFile = File(dest, fh.fileName.substringAfterLast('/'))
                     outputFile.parentFile?.mkdirs()
-                    outputFile.outputStream().use { fos ->
+                    FileOutputStream(outputFile).use { fos ->
                         archive.extractFile(fh, fos)
                     }
                 }
@@ -142,8 +135,8 @@ fun ComicViewer(
 ) {
     val context = LocalContext.current
     val renderer = remember { ComicRenderer(context) }
-    var totalPages by remember { mutableIntStateOf(0) }
-    var currentPage by remember { mutableIntStateOf(0) }
+    var totalPages by remember { mutableStateOf(0) }
+    var currentPage by remember { mutableStateOf(0) }
 
     LaunchedEffect(filePath) {
         totalPages = renderer.load(filePath)
@@ -156,7 +149,7 @@ fun ComicViewer(
 
     if (totalPages == 0) {
         Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            androidx.compose.material3.Text("加载中…")
+            Text("加载中…")
         }
     } else {
         val scrollState = rememberScrollState()
@@ -167,7 +160,6 @@ fun ComicViewer(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // 当前页
             val bitmap = remember(currentPage, filePath) {
                 renderer.getPageBitmap(currentPage)
             }
@@ -188,11 +180,10 @@ fun ComicViewer(
                         .height(400.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    androidx.compose.material3.Text("无法加载此页")
+                    Text("无法加载此页")
                 }
             }
 
-            // 页码导航
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -200,7 +191,7 @@ fun ComicViewer(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                androidx.compose.material3.TextButton(
+                TextButton(
                     onClick = {
                         if (currentPage > 0) {
                             currentPage--
@@ -209,19 +200,19 @@ fun ComicViewer(
                     },
                     enabled = currentPage > 0,
                 ) {
-                    androidx.compose.material3.Text("上一页")
+                    Text("上一页")
                 }
 
                 Spacer(Modifier.width(16.dp))
 
-                androidx.compose.material3.Text(
+                Text(
                     text = "${currentPage + 1} / $totalPages",
-                    style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
 
                 Spacer(Modifier.width(16.dp))
 
-                androidx.compose.material3.TextButton(
+                TextButton(
                     onClick = {
                         if (currentPage < totalPages - 1) {
                             currentPage++
@@ -230,7 +221,7 @@ fun ComicViewer(
                     },
                     enabled = currentPage < totalPages - 1,
                 ) {
-                    androidx.compose.material3.Text("下一页")
+                    Text("下一页")
                 }
             }
         }
