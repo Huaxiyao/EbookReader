@@ -65,6 +65,7 @@ fun BookCard(
             // 阅读进度条
             if (book.progress > 0f) {
                 Spacer(Modifier.height(4.dp))
+                @Suppress("DEPRECATION")
                 LinearProgressIndicator(
                     progress = { book.progress },
                     modifier = Modifier

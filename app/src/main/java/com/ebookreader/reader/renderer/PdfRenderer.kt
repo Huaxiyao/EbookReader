@@ -87,14 +87,14 @@ class PdfRenderer(private val context: Context) {
      * 缩小
      */
     fun zoomOut() {
-        pdfView?.zoomTo(pdfView?.currentZoom?.times(0.8f) ?: 1f)
+        pdfView?.zoomTo(0.8f)
     }
 
     /**
      * 放大
      */
     fun zoomIn() {
-        pdfView?.zoomTo(pdfView?.currentZoom?.times(1.25f) ?: 1f)
+        pdfView?.zoomTo(1.25f)
     }
 
     /**

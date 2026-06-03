@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.barteksc.pdfviewer.PDFView
+import com.github.barteksc.pdfviewer.PDFView
 import com.ebookreader.data.model.BookFormat
 import com.ebookreader.data.model.ReaderTheme
 import com.ebookreader.reader.renderer.ComicViewer
@@ -336,6 +336,7 @@ fun ReaderScreen(
 
         // ── 底部进度条 ──
         if (!uiState.showToolbar && !uiState.showSettings && uiState.totalPages > 0) {
+            @Suppress("DEPRECATION")
             LinearProgressIndicator(
                 progress = { uiState.progress },
                 modifier = Modifier
@@ -343,6 +344,7 @@ fun ReaderScreen(
                     .fillMaxWidth()
                     .height(2.dp),
                 color = MaterialTheme.colorScheme.primary,
+                trackColor = Color.Transparent,
                 trackColor = Color.Transparent,
             )
         }
