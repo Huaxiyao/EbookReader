@@ -61,11 +61,9 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     DB_NAME
                 )
-                    // Debug 模式下 schema 变更时静默重建（开发便捷）
-                    // 生产环境有数据迁移需求请实现 Migration
-                    .fallbackToDestructiveMigration(
-                        !isReleaseBuild(context)
-                    )
+                    // schema 变更时静默重建（v1 阶段快速迭代用）
+                    // TODO: 稳定后实现 Migration 对象以保留用户数据
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { INSTANCE = it }
             }
