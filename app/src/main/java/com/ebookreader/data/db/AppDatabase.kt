@@ -39,6 +39,18 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         private const val DB_NAME = "ebook_reader.db"
 
+        /** 检测是否为 Release 构建（防止 release 版静默删数据） */
+        private fun isReleaseBuild(context: Context): Boolean {
+            return try {
+                val info = context.packageManager.getApplicationInfo(
+                    context.packageName, 0
+                )
+                (info.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) == 0
+            } catch (_: Exception) {
+                true
+            }
+        }
+
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -49,7 +61,11 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     DB_NAME
                 )
-                    .fallbackToDestructiveMigration()
+                    // Debug 模式下 schema 变更时静默重建（开发便捷）
+                    // 生产环境有数据迁移需求请实现 Migration
+                    .fallbackToDestructiveMigration(
+                        !isReleaseBuild(context)
+                    )
                     .build()
                     .also { INSTANCE = it }
             }

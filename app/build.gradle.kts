@@ -97,10 +97,7 @@ dependencies {
     // PDF Viewer (Maven Central)
     implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 
-    // RAR support (for CBR comics, Maven Central)
-    implementation("com.github.junrar:junrar:7.5.5")
-
-    // RAR support (for CBR comics)
+    // RAR support for CBR comics (Maven Central)
     implementation("com.github.junrar:junrar:7.5.5")
 
     // Image loading

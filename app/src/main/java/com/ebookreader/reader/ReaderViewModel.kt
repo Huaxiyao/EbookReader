@@ -126,10 +126,14 @@ class ReaderViewModel @Inject constructor(
     }
 
     /**
-     * 设置亮度覆盖
+     * 设置亮度覆盖（持久化到数据库）
      */
     fun setBrightness(brightness: Float) {
         _uiState.update { it.copy(brightness = brightness) }
+        viewModelScope.launch {
+            val state = _uiState.value
+            repository.updateReaderSettings(bookId, state.theme, state.fontSize, brightness)
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider 路径 — 仅暴露应用专属目录，不暴露整个存储 -->
 <paths>
-    <external-path name="external_files" path="." />
+    <external-files-path name="books" path="books/" />
     <cache-path name="cache" path="." />
 </paths>
