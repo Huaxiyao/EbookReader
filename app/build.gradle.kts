@@ -78,9 +78,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
     // Room (SQLite)
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
+    ksp("androidx.room:room-compiler:2.8.4")
 
     // Hilt (DI)
     implementation("com.google.dagger:hilt-android:2.50")
